@@ -36,7 +36,7 @@ def conditional_prob(df:pd.DataFrame, feature_cols, target_col_name):
 
 
     for feature_col in feature_cols:
-        df[feature_col + "_prob"] = df[feature_col + "_size"] * df_target['prob'] / df['size']
+        df[feature_col + "_prob"] = (df[feature_col + "_size"] * df['prob']) / df['size']
     return df
 
 def split_dataset(df, x):
@@ -74,8 +74,8 @@ def check_accuracy(test_set, train_set, feature_col, target_name):
     test_set['result'] = test_set.apply(lambda x: x.predicted_result in x.actual_result, axis=1)
 
     df_result = test_set.groupby('result')
-    #l = [target_name,'predicted_result','prob1', 'prob2', 'result']
-    #print(test_set[l])
+    l = [target_name,'predicted_result','prob1', 'prob2', 'result']
+    print(test_set[l])
     print("Accuracy = "+ str(df_result.size()[1]*100/(df_result.size()[1]+df_result.size()[0])) + "%")
     return test_set
 
@@ -96,6 +96,5 @@ if __name__ == '__main__':
         #print(df_all)
 
         test_set_op = check_accuracy(test_set, df_all, feature_cols, target_col_name)
-        test_set_op.to_csv("sk.csv")
 
 
