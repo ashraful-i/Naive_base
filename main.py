@@ -58,14 +58,15 @@ def check_accuracy(test_set, train_set, feature_col, target_name):
             #print(merge_set)
             test_set = pd.merge(test_set, merge_set, how='left', on=[f], suffixes=suf)
             #print(train_set[[f, f + "_prob"]])
-    test_set = test_set.fillna(0)
+    test_set = test_set.fillna(0.01)
+
     list_result = []
     for grp_name, grp in df_train_grp:
         test_set['prob' + str(grp_name)] = 1
         list_result.append('prob' + str(grp_name))
         for feature in feature_col:
             test_set['prob'+str(grp_name)] *= test_set[feature+"_prob"+str(grp_name)]
-    print(list_result)
+    #print(list_result)
 
     test_set['predicted_result'] = test_set[list_result].idxmax(axis=1)
     test_set['actual_result'] = 'prob' + test_set[target_name].astype(str)
@@ -73,11 +74,14 @@ def check_accuracy(test_set, train_set, feature_col, target_name):
     test_set['result'] = test_set.apply(lambda x: x.predicted_result in x.actual_result, axis=1)
 
     df_result = test_set.groupby('result')
+    #l = [target_name,'predicted_result','prob1', 'prob2', 'result']
+    #print(test_set[l])
     print("Accuracy = "+ str(df_result.size()[1]*100/(df_result.size()[1]+df_result.size()[0])) + "%")
-    pass
+    return test_set
+
 if __name__ == '__main__':
-    data_file = "haberman.data"
-    seperator = ','
+    data_file = "Skin_NonSkin.txt"
+    seperator = '\t'
     target_col = -1
 
     split_times = 1
@@ -91,6 +95,7 @@ if __name__ == '__main__':
         df_all = conditional_prob(train_set,feature_cols, target_col_name)
         #print(df_all)
 
-        check_accuracy(test_set, df_all, feature_cols, target_col_name)
+        test_set_op = check_accuracy(test_set, df_all, feature_cols, target_col_name)
+        test_set_op.to_csv("sk.csv")
 
 
