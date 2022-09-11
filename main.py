@@ -36,7 +36,8 @@ def conditional_prob(df:pd.DataFrame, feature_cols, target_col_name):
 
 
     for feature_col in feature_cols:
-        df[feature_col + "_prob"] = df[feature_col + "_size"] * df_target['prob'] / df['size']
+        df[feature_col + "_prob"] = df[feature_col + "_size"] * df['prob'] / df['size']
+    print(df)
     return df
 
 def split_dataset(df, x):
